@@ -1,0 +1,201 @@
+id,label,group
+1,Nguyễn Đăng Việt,Nhóm 1
+2,Lê Thị Minh Ngọc,Nhóm 1
+3,Nguyễn Văn Tuấn Vũ ,Nhóm 1
+4,Nguyễn Văn Trung Nguyên,Nhóm 1
+5,Nguyễn Ngọc Quỳnh Trang,Nhóm 1
+6,Nguyễn Thiện Bảo Nam,Nhóm 1
+7,Đào Xuân Bắc,Nhóm 1
+8,Nguyễn Minh Thành,Nhóm 1
+9,Nguyễn Quốc Trung,Nhóm 1
+10,Nguyễn Thị Thanh Phương,Nhóm 1
+11,Nguyễn Viết Minh Vũ,Nhóm 1
+12,Phạm Tuấn Tài,Nhóm 1
+13,Đào Việt Hưng,Nhóm 1
+14,Đào Xuân Kiên,Nhóm 1
+15,Ngô Vân Anh,Nhóm 1
+16,Đỗ Minh Phương,Nhóm 1
+17,Nguyễn Đăng Thưởng,Nhóm 1
+18,Van HoanLai,Nhóm 1
+19,Tu Yatogami,Nhóm 2
+20,Viet Thang,Nhóm 2
+21,Vu Hung,Nhóm 2
+22,Doan Hoai Nam,Nhóm 2
+23,Ngô Tuấn Kiệt,Nhóm 2
+24,Ngo Quang Thang,Nhóm 2
+25,Pham Thi Dieu Chau,Nhóm 2
+26,Nguyễn Đ. Hiển,Nhóm 2
+27,Thai Nguyendatt,Nhóm 2
+28,Long Ngạo Thiên,Nhóm 2
+29,Nguyễn Minh Sang,Nhóm 2
+30,Ngo Thi Thanh Lam,Nhóm 2
+31,Khánh Huyền ,Nhóm 2
+32,Đinh Tuấn Kiệt,Nhóm 2
+33,Dương Tùng ,Nhóm 2
+34,Nam Anh ,Nhóm 2
+35,Pham Duc Anh,Nhóm 2
+36,Nguyễn Đăng Hùng ,Nhóm 2
+37,Trần Xuân Mai ,Nhóm 2
+38,Nguyễn Minh Phương,Nhóm 2
+39,Kim Ngân,Nhóm 2
+40,Lương Ngọc Nghĩa ,Nhóm 3
+41,Minh Hoàng ,Nhóm 3
+42,Tuan Anh Nguyen,Nhóm 3
+43,Nguyễn Trọng Đô,Nhóm 3
+44,Caro Tính ,Nhóm 3
+45,Dũng Vũ ,Nhóm 3
+46,Phạm Hoàng Tùng ,Nhóm 3
+47,Phạm Hà Giang ,Nhóm 3
+48,Bé Kim Anh,Nhóm 3
+49,Nguyễn Thị Vui,Nhóm 3
+50,Lê Thị Quỳnh,Nhóm 3
+51,Bảo Ngọc ,Nhóm 3
+52,Duyen NT,Nhóm 3
+53,Trần Thanh Mai,Nhóm 3
+54,Thành Nam,Nhóm 3
+55,Hoàng Hoàng ,Nhóm 3
+56,Thuỳ Dương,Nhóm 3
+57,Hoangg Yen,Nhóm 3
+58,Diệu Linh,Nhóm 3
+59,Bùi Hậu,Nhóm 3
+60,Vũ Tuấn Hưng,Nhóm 4
+61,Mai Diệp,Nhóm 4
+62,Ngoc Anh,Nhóm 4
+63,Nguyễn Nhật Nam,Nhóm 4
+64,Le Tai Duc,Nhóm 4
+65,Hai Yen Nguyen,Nhóm 4
+66,Đỗ Hồng Nhung,Nhóm 4
+67,Nguyễn Đức Bính ,Nhóm 4
+68,Hà Quang Dự,Nhóm 4
+69,Văn Mạnh,Nhóm 4
+70,Nguyễn Nam,Nhóm 4
+71,Huy Hoàng Vũ ,Nhóm 4
+72,Thanh Thảo,Nhóm 4
+73,Quyên Mai,Nhóm 4
+74,Phạm Thảo Nguyên,Nhóm 4
+75,Đỗ Nam Trung ,Nhóm 4
+76,Đào Minh Nhật,Nhóm 4
+77,Anh Thu,Nhóm 4
+78,Ngọc Mai,Nhóm 4
+79,Hoàng Xuân Đức ,Nhóm 4
+80,Ngọc Linh,Nhóm 5
+81,Trang Chu,Nhóm 5
+82,Nguyễn Đông Hưng,Nhóm 5
+83,Cố Trường Ca,Nhóm 5
+84,Quý Silva,Nhóm 5
+85,Nhả Linh,Nhóm 5
+86,Bích Hậu ,Nhóm 5
+87,Đạt Hoàng ,Nhóm 5
+88,Như Quỳnh,Nhóm 5
+89,Ngọc Nhi,Nhóm 5
+90,Khánh Linh,Nhóm 5
+91,Huấn Nguyễn,Nhóm 5
+92,Trương Xuân Hoa,Nhóm 5
+93,Hàn Lập,Nhóm 5
+94,Huy Quần ,Nhóm 5
+95,Ánh Nhung,Nhóm 5
+96, Hồng Nguyễn ,Nhóm 5
+97,Bàng Long,Nhóm 5
+98,Hạo Nhiên,Nhóm 5
+99,Nhi Nguyễn Hạ,Nhóm 5
+100,Đạt Bú Đá,Nhóm 6
+101,Alex Micheal,Nhóm 6
+102,Mai Mai Hạ,Nhóm 6
+103, Nguyễn Thanh Thảo ,Nhóm 6
+104,Thảo Hà Thành,Nhóm 6
+105,Huỳnh Hoàng Yến,Nhóm 6
+106,Ngọc Anh ,Nhóm 6
+107,Khưu Đằng Khoa,Nhóm 6
+108,Toàn Bùi ,Nhóm 6
+109,Bách Tuấn Trần,Nhóm 6
+110,Đỗ Thương,Nhóm 6
+111,Duyênn Trần,Nhóm 6
+112,Uông Thanh ,Nhóm 6
+113,An Nguyễn ,Nhóm 6
+114,Ngô Bá Khá ,Nhóm 6
+115,Tuấn Tiền Tỉ,Nhóm 6
+116,Tâm Trần,Nhóm 6
+117,Tâm lê,Nhóm 6
+118,Thu Hương,Nhóm 6
+119,Nguyễn P hương Linh,Nhóm 6
+120,Lê Hồng,Nhóm 7
+121,LÊ Xuân Trường ,Nhóm 7
+122,Ngọc Hảo,Nhóm 7
+123,Hà Hân,Nhóm 7
+124,Nguyễn Thị Phương Thảo,Nhóm 7
+125,Quang Minh,Nhóm 7
+126,Hoàng Minh Sct,Nhóm 7
+127,Tuệ Mân,Nhóm 7
+128,Nguyễn Bá Vinh,Nhóm 7
+129,Nguyên Hạnh,Nhóm 7
+130,Nguyễn Minh Thắng,Nhóm 7
+131,Diệu Chi,Nhóm 7
+132,Xuân Sang,Nhóm 7
+133,Nguyễn Công Cương,Nhóm 7
+134,Nguyễn Thiện Hiếu ,Nhóm 7
+135,Vũ Nam,Nhóm 7
+136,Binh Dang,Nhóm 7
+137,Thái Văn Sang,Nhóm 7
+138,Bún Riêu,Nhóm 7
+139,Nguyen Hoai Anh,Nhóm 7
+140,Trà Thu Phạm,Nhóm 8
+141,Vũ Xuân Thái,Nhóm 8
+142,Vũ Quỳnh Chi,Nhóm 8
+143,Phạm Minh Quảng ,Nhóm 8
+144,Nguyễn Hữu Vinh,Nhóm 8
+145,Hà Vy,Nhóm 8
+146,Hùng,Nhóm 8
+147,Phuong Vy,Nhóm 8
+148,Thuỷ Tiên ,Nhóm 8
+149,Phương Thảo,Nhóm 8
+150,Nguyễn Ngọc,Nhóm 8
+151,Nguyễn Nhân,Nhóm 8
+152,Lê Bích,Nhóm 8
+153,Thiệnn Minh,Nhóm 8
+154,Dương Hoàng,Nhóm 8
+155,Ngô Ph ương Thảo,Nhóm 8
+156,Trần Hồng Ngọc ,Nhóm 8
+157,Hải Long,Nhóm 8
+158,Phương Anh,Nhóm 8
+159,Linh N guyễn ,Nhóm 8
+160,Chu Thị Hà,Nhóm 9
+161,Phương Cun,Nhóm 9
+162,Phạm Thu Trang,Nhóm 9
+163,Tống Ngọpc Luận,Nhóm 9
+164,Vũ Ngọc An,Nhóm 9
+165,Khánh Nhựt,Nhóm 9
+166,Đào Văn Duy,Nhóm 9
+167,Ngọc Anh ,Nhóm 9
+168,Phạm Đức,Nhóm 9
+169,Hà Anh Tuấn,Nhóm 9
+170,Lê Thị Tâm,Nhóm 9
+171,Hà Thư',Nhóm 9
+172,Phạm Thị Hồng Anh,Nhóm 9
+173,Quỳnh Ntt,Nhóm 9
+174,Nhất Ổn Mà ,Nhóm 9
+175,Thu Hường ,Nhóm 9
+176,Văn Kết,Nhóm 9
+177,Nguyễn Đức Bính ,Nhóm 9
+178,Như Nguyễn,Nhóm 9
+179,Phạm Thuỳ Vân ,Nhóm 9
+180,Thuỳ Linh ,Nhóm 10
+181,Dương Quý ,Nhóm 10
+182,Nguyễn Ngọc Mai,Nhóm 10
+183,Phạm Hoa Ma,Nhóm 10
+184,Quang Đạt,Nhóm 10
+185,Trân Văn Dương,Nhóm 10
+186,Phạm Ngọc Diễm ,Nhóm 10
+187,Minh Trường,Nhóm 10
+188,Nguyễn Vân,Nhóm 10
+189,Trường Giang ,Nhóm 10
+190,Người Vô Xứ,Nhóm 10
+191,Hà Thuỳ Tien,Nhóm 10
+192,Quoc Le Truong,Nhóm 10
+193,Hằng Trần,Nhóm 10
+194,Hưu Nhẫn,Nhóm 10
+195,Lê Uyển Đạt,Nhóm 10
+196,Bảo Nghi,Nhóm 10
+197,Vo An Le,Nhóm 10
+198,Đặng Đoan Băng ,Nhóm 10
+199,Anh Lan,Nhóm 10
+200,Cù Huy,Nhóm 10
