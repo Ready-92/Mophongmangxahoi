@@ -2,12 +2,113 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Mô phỏng mạng xã hội | Toán rời rạc</title>
+    <title>Mô phỏng Mạng Xã Hội</title>
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style>
+        body { margin: 0; background-color: #111; color: white; font-family: sans-serif; }
+        #mynetwork { width: 100vw; height: 100vh; border: 1px solid #444; }
+        .controls { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); padding: 10px; border-radius: 8px; pointer-events: none;}
+    </style>
 </head>
 <body>
-    
-    <script src="main.js"></script>
+
+<div class="controls">
+    <h3>Dự án Phân tích Cộng đồng</h3>
+    <p>Số lượng User: <span id="userCount">...</span></p>
+    <p>Click vào 1 người để xem liên kết!</p>
+    <p>Click ra ngoài khoảng trống để Reset.</p>
+</div>
+
+<div id="mynetwork"></div>
+
+<script type="text/javascript">
+    // Load dữ liệu từ file data.json
+    fetch('data.json')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('userCount').innerText = data.nodes.length;
+            drawGraph(data.nodes, data.edges);
+        });
+
+    function drawGraph(nodesData, edgesData) {
+        // Tạo DataSet của Vis.js
+        var nodes = new vis.DataSet(nodesData);
+        var edges = new vis.DataSet(edgesData);
+
+        var container = document.getElementById('mynetwork');
+        var data = { nodes: nodes, edges: edges };
+        
+        var options = {
+            nodes: {
+                borderWidth: 2,
+                size: 30,
+                color: { border: '#222222', background: '#666666' },
+                font: { color: '#eeeeee' }
+            },
+            edges: {
+                color: { color: '#555555', inherit: false },
+                width: 0.5,
+                smooth: { type: 'continuous' }
+            },
+            physics: {
+                stabilization: false,
+                barnesHut: { gravitationalConstant: -8000, springConstant: 0.04, springLength: 95 }
+            },
+            interaction: { hover: true }
+        };
+
+        var network = new vis.Network(container, data, options);
+
+        // --- XỬ LÝ SỰ KIỆN CLICK (HIGHLIGHT) ---
+        network.on("click", function (params) {
+            if (params.nodes.length > 0) {
+                // Có 1 node được chọn
+                var selectedNodeId = params.nodes[0];
+                var connectedNodes = network.getConnectedNodes(selectedNodeId);
+                var allNodes = nodes.get();
+                var allEdges = edges.get();
+
+                // 1. Làm mờ tất cả
+                for (var i = 0; i < allNodes.length; i++) {
+                    allNodes[i].color = { background: 'rgba(100,100,100,0.1)', border: 'rgba(100,100,100,0.1)' };
+                    if (allNodes[i].hiddenLabel === undefined) {
+                        allNodes[i].hiddenLabel = allNodes[i].label;
+                        allNodes[i].label = undefined; // Ẩn tên cho đỡ rối
+                    }
+                }
+
+                // 2. Làm nổi bật Node được chọn (Vòng sáng to)
+                var selectedNode = nodes.get(selectedNodeId);
+                selectedNode.color = { background: '#ff0000', border: '#ffff00' }; // Đỏ viền vàng
+                selectedNode.label = selectedNode.hiddenLabel || selectedNode.label; // Hiện tên lại
+                selectedNode.font = { size: 20, color: '#ffffff', face: 'arial', strokeWidth: 3, strokeColor: '#000000'};
+                
+                // Cập nhật lại node chọn
+                nodes.update(selectedNode);
+
+                // 3. Làm nổi bật các node hàng xóm (Người thân)
+                for (var i = 0; i < connectedNodes.length; i++) {
+                    var neighbor = nodes.get(connectedNodes[i]);
+                    neighbor.color = { background: '#00ff00', border: '#ffffff' }; // Xanh lá
+                    neighbor.label = neighbor.hiddenLabel || neighbor.label;
+                    nodes.update(neighbor);
+                }
+
+            } else {
+                // Reset lại nếu click ra ngoài
+                var allNodes = nodes.get();
+                for (var i = 0; i < allNodes.length; i++) {
+                    allNodes[i].color = undefined; // Về mặc định (có ảnh)
+                    if (allNodes[i].hiddenLabel !== undefined) {
+                        allNodes[i].label = allNodes[i].hiddenLabel;
+                        allNodes[i].hiddenLabel = undefined;
+                    }
+                }
+                nodes.update(allNodes);
+            }
+        });
+    }
+</script>
+
 </body>
 </html>
