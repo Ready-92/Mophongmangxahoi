@@ -4,110 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mô phỏng Mạng Xã Hội</title>
-    <!-- Import Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Liên kết đến file CSS riêng -->
-    <link rel="stylesheet" href="style.css">
-
-    <!-- Import Vis.js Library (Vẫn giữ CDN này online) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <header>
-        <h1>Dự án Phân tích Cộng đồng</h1>
-        <p class="subtitle"></p>
-    </header>
+    <header>Dự án Phân tích Cộng đồng</header>
 
     <div class="container">
-        
-        <!-- === CARD CHÍNH: NETWORK GRAPH === -->
-        <main class="main-card">
-            <div id="mynetwork"></div>
-            <div class="graph-overlay">
-                Scroll để zoom • Kéo thả để di chuyển
-            </div>
-        </main>
+        <div class="graph-container">
+            <div class="overlay-note">Kéo thả để di chuyển • Lăn chuột để zoom</div>
+            <div id="network"></div>
+        </div>
 
-        <!-- === CỘT BÊN PHẢI: CONTROLS === -->
-        <aside class="sidebar">
-            
-            <!-- CARD 1: ĐIỀU KHIỂN SỐ LƯỢNG -->
-            <div class="control-card">
-                <div class="card-title">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                    Dữ liệu nguồn
+        <div class="sidebar">
+            <div class="card">
+                <div class="card-header"><i class="fas fa-server"></i> TRẠNG THÁI</div>
+                <div id="statusData" style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                    Đang chờ tải dữ liệu...
                 </div>
-                <div style="margin-bottom: 8px;">
-                    <label style="font-size: 12px; color: #64748b; display:block; margin-bottom:4px">Hiển thị số lượng User (Max 200):</label>
-                    <input type="number" id="nodeCount" value="200" min="5" max="200">
-                </div>
-                <button class="btn" onclick="regenerateGraph()">Tạo lại Kết nối</button>
+                <button class="btn-primary" onclick="loadGraph()">
+                    <i class="fas fa-sync"></i> Tải lại Dữ liệu
+                </button>
             </div>
 
-            <!-- CARD 2: CHI TIẾT ĐỐI TƯỢNG -->
-            <div class="control-card" style="flex: 1;"> <!-- flex: 1 để chiếm khoảng trống nếu cần -->
-                <div class="card-title">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                    Thông tin chi tiết
-                </div>
-                
-                <div id="info-placeholder" class="info-placeholder">
-                    Click vào một User trên bản đồ để xem thông tin chi tiết.
-                </div>
-
-                <div id="info-content" class="info-content">
-                    <div class="info-row">
-                        <span class="info-label">ID:</span>
-                        <span class="info-value" id="node-id">--</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Tên:</span>
-                        <span class="info-value" id="node-label">--</span>
-                    </div>
-                    
-                    <hr style="border: 0; border-top: 1px solid #f1f5f9; margin: 12px 0;">
-                    <div class="info-row">
-                        <span class="info-label">Bạn bè:</span>
-                        <span class="info-value" id="node-connections" style="color: #2563eb;">--</span>
-                    </div>
+            <div class="card">
+                <div class="card-header"><i class="fas fa-user"></i> CHI TIẾT USER</div>
+                <div class="info-content" id="infoPanel">
+                    <em>Click vào một ảnh đại diện trên bản đồ để xem thông tin.</em>
                 </div>
             </div>
 
-            <!-- CARD 3: CẤU HÌNH HIỂN THỊ -->
-            <div class="control-card">
-                <div class="card-title">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.39a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                    Cấu hình
-                </div>
-                
-                <div class="toggle-row">
+            <div class="card">
+                <div class="card-header"><i class="fas fa-sliders-h"></i> CẤU HÌNH</div>
+                <div class="config-item">
                     <span>Mô phỏng vật lý</span>
                     <label class="switch">
                         <input type="checkbox" id="physicsToggle" checked onchange="togglePhysics()">
                         <span class="slider"></span>
                     </label>
                 </div>
-                
-                <div class="toggle-row">
-                    <span>Bóng đổ (Shadow)</span>
-                    <label class="switch">
-                        <input type="checkbox" id="shadowToggle" onchange="toggleShadow()">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-
-                <div style="font-size: 12px; color: #94a3b8; margin-top: 8px;">
-                    Tắt vật lý giúp ổn định vị trí khi mạng lưới quá đông.
-                </div>
             </div>
-
-        </aside>
+        </div>
     </div>
 
-    <!-- Liên kết đến file Javascript xử lý logic -->
-    <script src="script.js"></script>
-
+    <script src="main.js"></script>
 </body>
 </html>
