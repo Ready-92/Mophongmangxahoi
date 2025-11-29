@@ -2,113 +2,112 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mô phỏng Mạng Xã Hội</title>
+    <!-- Import Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Liên kết đến file CSS riêng -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Import Vis.js Library (Vẫn giữ CDN này online) -->
     <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
-    <style>
-        body { margin: 0; background-color: #111; color: white; font-family: sans-serif; }
-        #mynetwork { width: 100vw; height: 100vh; border: 1px solid #444; }
-        .controls { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); padding: 10px; border-radius: 8px; pointer-events: none;}
-    </style>
 </head>
 <body>
 
-<div class="controls">
-    <h3>Dự án Phân tích Cộng đồng</h3>
-    <p>Số lượng User: <span id="userCount">...</span></p>
-    <p>Click vào 1 người để xem liên kết!</p>
-    <p>Click ra ngoài khoảng trống để Reset.</p>
-</div>
+    <header>
+        <h1>Dự án Phân tích Cộng đồng</h1>
+        <p class="subtitle"></p>
+    </header>
 
-<div id="mynetwork"></div>
-
-<script type="text/javascript">
-    // Load dữ liệu từ file data.json
-    fetch('data.json')
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('userCount').innerText = data.nodes.length;
-            drawGraph(data.nodes, data.edges);
-        });
-
-    function drawGraph(nodesData, edgesData) {
-        // Tạo DataSet của Vis.js
-        var nodes = new vis.DataSet(nodesData);
-        var edges = new vis.DataSet(edgesData);
-
-        var container = document.getElementById('mynetwork');
-        var data = { nodes: nodes, edges: edges };
+    <div class="container">
         
-        var options = {
-            nodes: {
-                borderWidth: 2,
-                size: 30,
-                color: { border: '#222222', background: '#666666' },
-                font: { color: '#eeeeee' }
-            },
-            edges: {
-                color: { color: '#555555', inherit: false },
-                width: 0.5,
-                smooth: { type: 'continuous' }
-            },
-            physics: {
-                stabilization: false,
-                barnesHut: { gravitationalConstant: -8000, springConstant: 0.04, springLength: 95 }
-            },
-            interaction: { hover: true }
-        };
+        <!-- === CARD CHÍNH: NETWORK GRAPH === -->
+        <main class="main-card">
+            <div id="mynetwork"></div>
+            <div class="graph-overlay">
+                Scroll để zoom • Kéo thả để di chuyển
+            </div>
+        </main>
 
-        var network = new vis.Network(container, data, options);
+        <!-- === CỘT BÊN PHẢI: CONTROLS === -->
+        <aside class="sidebar">
+            
+            <!-- CARD 1: ĐIỀU KHIỂN SỐ LƯỢNG -->
+            <div class="control-card">
+                <div class="card-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    Dữ liệu nguồn
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <label style="font-size: 12px; color: #64748b; display:block; margin-bottom:4px">Hiển thị số lượng User (Max 200):</label>
+                    <input type="number" id="nodeCount" value="200" min="5" max="200">
+                </div>
+                <button class="btn" onclick="regenerateGraph()">Tạo lại Kết nối</button>
+            </div>
 
-        // --- XỬ LÝ SỰ KIỆN CLICK (HIGHLIGHT) ---
-        network.on("click", function (params) {
-            if (params.nodes.length > 0) {
-                // Có 1 node được chọn
-                var selectedNodeId = params.nodes[0];
-                var connectedNodes = network.getConnectedNodes(selectedNodeId);
-                var allNodes = nodes.get();
-                var allEdges = edges.get();
-
-                // 1. Làm mờ tất cả
-                for (var i = 0; i < allNodes.length; i++) {
-                    allNodes[i].color = { background: 'rgba(100,100,100,0.1)', border: 'rgba(100,100,100,0.1)' };
-                    if (allNodes[i].hiddenLabel === undefined) {
-                        allNodes[i].hiddenLabel = allNodes[i].label;
-                        allNodes[i].label = undefined; // Ẩn tên cho đỡ rối
-                    }
-                }
-
-                // 2. Làm nổi bật Node được chọn (Vòng sáng to)
-                var selectedNode = nodes.get(selectedNodeId);
-                selectedNode.color = { background: '#ff0000', border: '#ffff00' }; // Đỏ viền vàng
-                selectedNode.label = selectedNode.hiddenLabel || selectedNode.label; // Hiện tên lại
-                selectedNode.font = { size: 20, color: '#ffffff', face: 'arial', strokeWidth: 3, strokeColor: '#000000'};
+            <!-- CARD 2: CHI TIẾT ĐỐI TƯỢNG -->
+            <div class="control-card" style="flex: 1;"> <!-- flex: 1 để chiếm khoảng trống nếu cần -->
+                <div class="card-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    Thông tin chi tiết
+                </div>
                 
-                // Cập nhật lại node chọn
-                nodes.update(selectedNode);
+                <div id="info-placeholder" class="info-placeholder">
+                    Click vào một User trên bản đồ để xem thông tin chi tiết.
+                </div>
 
-                // 3. Làm nổi bật các node hàng xóm (Người thân)
-                for (var i = 0; i < connectedNodes.length; i++) {
-                    var neighbor = nodes.get(connectedNodes[i]);
-                    neighbor.color = { background: '#00ff00', border: '#ffffff' }; // Xanh lá
-                    neighbor.label = neighbor.hiddenLabel || neighbor.label;
-                    nodes.update(neighbor);
-                }
+                <div id="info-content" class="info-content">
+                    <div class="info-row">
+                        <span class="info-label">ID:</span>
+                        <span class="info-value" id="node-id">--</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Tên:</span>
+                        <span class="info-value" id="node-label">--</span>
+                    </div>
+                    
+                    <hr style="border: 0; border-top: 1px solid #f1f5f9; margin: 12px 0;">
+                    <div class="info-row">
+                        <span class="info-label">Bạn bè:</span>
+                        <span class="info-value" id="node-connections" style="color: #2563eb;">--</span>
+                    </div>
+                </div>
+            </div>
 
-            } else {
-                // Reset lại nếu click ra ngoài
-                var allNodes = nodes.get();
-                for (var i = 0; i < allNodes.length; i++) {
-                    allNodes[i].color = undefined; // Về mặc định (có ảnh)
-                    if (allNodes[i].hiddenLabel !== undefined) {
-                        allNodes[i].label = allNodes[i].hiddenLabel;
-                        allNodes[i].hiddenLabel = undefined;
-                    }
-                }
-                nodes.update(allNodes);
-            }
-        });
-    }
-</script>
+            <!-- CARD 3: CẤU HÌNH HIỂN THỊ -->
+            <div class="control-card">
+                <div class="card-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.39a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    Cấu hình
+                </div>
+                
+                <div class="toggle-row">
+                    <span>Mô phỏng vật lý</span>
+                    <label class="switch">
+                        <input type="checkbox" id="physicsToggle" checked onchange="togglePhysics()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div class="toggle-row">
+                    <span>Bóng đổ (Shadow)</span>
+                    <label class="switch">
+                        <input type="checkbox" id="shadowToggle" onchange="toggleShadow()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div style="font-size: 12px; color: #94a3b8; margin-top: 8px;">
+                    Tắt vật lý giúp ổn định vị trí khi mạng lưới quá đông.
+                </div>
+            </div>
+
+        </aside>
+    </div>
+
+    <!-- Liên kết đến file Javascript xử lý logic -->
+    <script src="script.js"></script>
 
 </body>
 </html>
