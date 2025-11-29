@@ -1,0 +1,184 @@
+/* === GLOBAL RESET === */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f1f5f9;
+    color: #334155;
+    padding: 20px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Ẩn scroll body để dùng scroll trong card */
+}
+
+/* === HEADER === */
+header { margin-bottom: 16px; flex-shrink: 0; }
+h1 { font-size: 20px; font-weight: 700; color: #1e293b; }
+.subtitle { font-size: 13px; color: #64748b; }
+
+/* === LAYOUT (GRID) === */
+.container {
+    display: grid;
+    grid-template-columns: 4fr 1fr;
+    gap: 20px;
+    flex-grow: 1;
+    height: calc(100% - 60px); /* Trừ đi header */
+}
+
+@media (max-width: 1024px) {
+    .container { grid-template-columns: 2fr 1fr; }
+}
+@media (max-width: 768px) {
+    body { overflow: auto; height: auto; }
+    .container { grid-template-columns: 1fr; height: auto; display: flex; flex-direction: column;}
+    .main-card { height: 60vh !important; }
+}
+
+/* === MAIN CARD (VISUALIZATION) === */
+.main-card {
+    background-color: #111; /* Nền tối cho graph đẹp hơn */
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    border: 1px solid #333;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+#mynetwork {
+    width: 100%;
+    height: 100%;
+    outline: none;
+}
+
+/* Overlay hướng dẫn nhỏ trên Main Card */
+.graph-overlay {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    padding: 10px;
+    border-radius: 8px;
+    color: #eee;
+    font-size: 12px;
+    pointer-events: none;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* === SIDEBAR === */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+/* Common Card Style */
+.control-card {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border: 1px solid #e2e8f0;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* --- CARD 1: SỐ LƯỢNG --- */
+.input-group {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-family: inherit;
+}
+
+.btn {
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    width: 100%;
+    transition: bg 0.2s;
+}
+.btn:hover { background-color: #1d4ed8; }
+
+/* --- CARD 2: CHI TIẾT --- */
+.info-placeholder {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 13px;
+    font-style: italic;
+    padding: 20px 0;
+}
+.info-content { display: none; }
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+.info-label { color: #64748b; }
+.info-value { font-weight: 600; color: #0f172a; }
+
+/* --- CARD 3: CẤU HÌNH --- */
+.toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 13px;
+}
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 20px;
+}
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+input:checked + .slider { background-color: #2563eb; }
+input:checked + .slider:before { transform: translateX(16px); }
