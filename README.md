@@ -36,14 +36,3 @@ Dự án chia làm 2 phần rõ rệt để đảm bảo tính logic và hiệu 
 * **Ngôn ngữ:** HTML5, CSS3, JavaScript.
 * **Thư viện:** Vis.js (Render đồ thị).
 * **Nhiệm vụ:** Đọc `data.json` -> Vẽ đồ thị -> Xử lý sự kiện click/zoom.
-
-## 📂 Cấu trúc thư mục
-
-```text
-├── users.csv          # [INPUT] Dữ liệu nguồn (Danh sách người dùng & Tính cách)
-├── process_data.py    # [BACKEND] Python Script: Xử lý logic, tính toán edges
-├── data.json          # [DATABASE] File trung gian chứa cấu trúc đồ thị chuẩn
-├── index.html         # [FRONTEND] Giao diện chính
-├── style.css          # [UI] Giao diện tối (Dark mode)
-├── main.js            # [LOGIC UI] Điều khiển thư viện vẽ hình & tương tác
-└── README.md          # Tài liệu báo cáo
