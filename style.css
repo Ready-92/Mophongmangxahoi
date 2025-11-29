@@ -165,14 +165,37 @@ button {
     border-left: 3px solid var(--accent-color);
 }
 
-hr {
-    border: 0;
-    border-top: 1px solid var(--border-color);
-    margin: 10px 0;
+.info-tabs {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
 }
 
-#userInfoContent {
+.tab-btn {
+    flex: 1;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: #1f1f1f;
+    color: #bbb;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tab-btn.is-active {
+    color: #fff;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 8px rgba(0, 122, 204, 0.4);
+}
+
+.tab-panel {
     display: none;
+    margin-top: 12px;
+}
+
+.tab-panel.is-active {
+    display: block;
 }
 
 .user-header {
@@ -212,10 +235,11 @@ hr {
 }
 
 .traits-box {
-    background: #1e1e1e;
+    margin-top: 10px;
     padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #333;
+    background: #1f1f1f;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
 }
 
 .traits-title {
@@ -227,7 +251,8 @@ hr {
 }
 
 .trait-tag {
-    background: #2d2d2d;
+    display: inline-block;
+    background: rgba(78, 201, 176, 0.15);
     color: #4ec9b0;
     padding: 2px 8px;
     margin: 2px;
@@ -235,4 +260,146 @@ hr {
     font-size: 11px;
     display: inline-block;
     border: 1px solid #3e3e42;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid var(--border-color);
+    margin: 10px 0;
+}
+
+#userInfoContent {
+    display: none;
+}
+
+.connections-box {
+    margin-top: 15px;
+    padding: 10px;
+    background: #1f1f1f;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.connections-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.connection-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.connection-card:hover {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px rgba(0, 122, 204, 0.4);
+}
+
+.conn-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.conn-name {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.conn-id {
+    font-size: 12px;
+    color: #aaa;
+}
+
+.conn-view-btn {
+    padding: 6px 12px;
+    background: transparent;
+    border: 1px solid var(--accent-color);
+    color: #fff;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.conn-traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.conn-chip {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    background: rgba(0, 122, 204, 0.15);
+    color: #8fcbff;
+    border: 1px solid rgba(0, 122, 204, 0.4);
+}
+
+.empty-text {
+    text-align: center;
+    color: #777;
+    font-size: 13px;
+}
+
+/* Weak Connections Styles (1-3 điểm chung) */
+.weak-connections-section {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px dashed #555;
+}
+
+.weak-connections-title {
+    font-size: 12px;
+    color: #ffa500;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.weak-connection {
+    border-color: rgba(255, 165, 0, 0.3) !important;
+    background: rgba(255, 165, 0, 0.05) !important;
+}
+
+.weak-connection:hover {
+    border-color: #ffa500 !important;
+    box-shadow: 0 0 10px rgba(255, 165, 0, 0.4) !important;
+}
+
+.weak-badge {
+    background: rgba(255, 165, 0, 0.2);
+    color: #ffa500;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+}
+
+.weak-chip {
+    background: rgba(255, 165, 0, 0.15) !important;
+    color: #ffcc66 !important;
+    border: 1px solid rgba(255, 165, 0, 0.4) !important;
+}
+
+.weak-btn {
+    border-color: #ffa500 !important;
+    color: #ffa500 !important;
+}
+
+.weak-btn:hover {
+    background: rgba(255, 165, 0, 0.2) !important;
+}
+
+/* Connections Title */
+.connections-title {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    font-weight: bold;
 }

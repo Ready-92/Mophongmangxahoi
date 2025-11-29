@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
     <div class="container">
@@ -18,7 +20,7 @@
 
         <div class="sidebar">
             <h2 class="app-title">Social Graph Simulation</h2>
-            
+
             <div class="control-group">
                 <label>Số lượng User hiển thị:</label>
                 <div class="slider-container">
@@ -52,7 +54,7 @@
             <div class="control-group">
                 <label>Chi tiết User đang chọn:</label>
                 <div id="nodeDetails" class="user-card">
-                    
+
                     <div id="defaultMessage"><em>Click vào node để xem</em></div>
 
                     <div id="userInfoContent">
@@ -64,11 +66,28 @@
                                 <span id="uID" class="user-id">ID: 0</span>
                             </div>
                         </div>
-                        
-                        <div class="traits-box">
-                            <div class="traits-title"><i class="fas fa-fingerprint"></i> 10 Đặc điểm nhận dạng</div>
-                            <div id="uTraitsList" style="line-height:1.6;">
-                                </div>
+
+                        <div class="info-tabs">
+                            <button class="tab-btn is-active" data-tab="traits" onclick="switchInfoTab('traits')">
+                                <i class="fas fa-fingerprint"></i> Đặc điểm
+                            </button>
+                            <button class="tab-btn" data-tab="connections" onclick="switchInfoTab('connections')">
+                                <i class="fas fa-people-arrows"></i> Kết nối
+                            </button>
+                        </div>
+
+                        <div class="tab-panel is-active" data-tab="traits">
+                            <div class="traits-box">
+                                <div class="traits-title"><i class="fas fa-fingerprint"></i> 10 Đặc điểm nhận dạng</div>
+                                <div id="uTraitsList" class="traits-list"></div>
+                            </div>
+                        </div>
+
+                        <div class="tab-panel" data-tab="connections">
+                            <div class="connections-box">
+                                <div class="connections-title"><i class="fas fa-link"></i> Bạn liên kết</div>
+                                <div id="uConnectionsGrid" class="connections-grid"></div>
+                            </div>
                         </div>
                     </div>
 
@@ -79,4 +98,5 @@
 
     <script src="main.js"></script>
 </body>
+
 </html>
