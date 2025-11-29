@@ -1,3 +1,6 @@
+import { findTopInfluencer } from './js/algorithms/degreeCentrality.js';
+import { findShortestPathBFS } from './js/algorithms/bfs.js';
+
 let network = null;
 let allNodes = [];
 let allEdges = [];
@@ -210,66 +213,32 @@ function runAlgorithm() {
     const resultBox = document.getElementById('analysisResult');
 
     if (algo === 'influence') {
-        // Thuật toán 1: Tìm KOL
-        let maxDegree = -1;
-        let bestNode = null;
-
-        currentNodes.forEach(node => {
-            const degree = currentEdges.filter(e => e.from === node.id || e.to === node.id).length;
-            if (degree > maxDegree) {
-                maxDegree = degree;
-                bestNode = node;
-            }
-        });
+        const { node: bestNode, degree: maxDegree } = findTopInfluencer(currentNodes, currentEdges);
 
         if (bestNode) {
             network.selectNodes([bestNode.id]);
             network.focus(bestNode.id, { scale: 1.2, animation: true });
             resultBox.innerHTML = `<strong>KOL:</strong> ${bestNode.label} (ID: ${bestNode.id}) - ${maxDegree} kết nối.`;
+        } else {
+            resultBox.innerText = 'Không tìm được KOL (thiếu dữ liệu).';
         }
 
     } else if (algo === 'path') {
-        // Thuật toán 2: BFS
         const startId = parseInt(document.getElementById('startNode').value);
         const endId = parseInt(document.getElementById('endNode').value);
 
         if (!startId || !endId) return;
 
-        const path = findShortestPathBFS(startId, endId);
+        const path = findShortestPathBFS(startId, endId, currentEdges);
 
         if (path) {
             network.setSelection({ nodes: path }, { highlightEdges: false });
             network.focus(endId, { animation: true });
-            resultBox.innerHTML = `<strong>BFS:</strong> ${path.length - 1} bước. Lộ trình: ${path.join(" ➔ ")}`;
+            resultBox.innerHTML = `<strong>BFS:</strong> ${path.length - 1} bước. Lộ trình: ${path.join(' ➔ ')}`;
         } else {
-            resultBox.innerText = "Không tìm thấy đường đi.";
+            resultBox.innerText = 'Không tìm thấy đường đi.';
         }
     }
-}
-
-// Thuật toán BFS thuần túy (GIỮ NGUYÊN)
-function findShortestPathBFS(start, end) {
-    if (start === end) return [start];
-    let queue = [[start]];
-    let visited = new Set();
-    visited.add(start);
-
-    while (queue.length > 0) {
-        let path = queue.shift();
-        let node = path[path.length - 1];
-        let neighbors = [];
-        currentEdges.forEach(e => {
-            if (e.from === node && !visited.has(e.to)) neighbors.push(e.to);
-            if (e.to === node && !visited.has(e.from)) neighbors.push(e.from);
-        });
-        for (let neighbor of neighbors) {
-            let newPath = [...path, neighbor];
-            if (neighbor === end) return newPath;
-            visited.add(neighbor);
-            queue.push(newPath);
-        }
-    }
-    return null;
 }
 
 function resetGraph() {
