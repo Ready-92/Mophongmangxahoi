@@ -26,9 +26,18 @@ async function loadGraph() {
     }
 }
 
-// 2. Cập nhật label slider
+// 2. Cập nhật từ slider -> input
 function updateLimitLabel() {
-    document.getElementById('limitLabel').innerText = document.getElementById('nodeLimit').value;
+    const value = document.getElementById('nodeLimit').value;
+    document.getElementById('nodeLimitInput').value = value;
+}
+
+// 2b. Cập nhật từ input -> slider
+function updateLimitFromInput() {
+    let value = parseInt(document.getElementById('nodeLimitInput').value) || 5;
+    value = Math.max(5, Math.min(200, value)); // Giới hạn 5-200
+    document.getElementById('nodeLimit').value = value;
+    document.getElementById('nodeLimitInput').value = value;
 }
 
 // 3. Lọc dữ liệu theo số lượng
@@ -196,20 +205,25 @@ function updateConnectionsCount(count) {
     if (badge) badge.innerText = count;
 }
 
-// 6. Logic ẩn hiện input thuật toán
+// 6. Logic ẩn hiện input thuật toán + enable/disable nút chạy
 function toggleAlgoInputs() {
     const algo = document.getElementById('algoSelect').value;
     const desc = document.getElementById('algoDesc');
     const inputs = document.getElementById('pathInputs');
+    const btnRun = document.getElementById('btnRunAlgo');
+
     inputs.style.display = 'none';
 
     if (algo === 'influence') {
         desc.innerText = "Lý thuyết: Degree Centrality. Tính toán số lượng kết nối của mỗi đỉnh để tìm người quan trọng nhất.";
+        btnRun.disabled = false;
     } else if (algo === 'path') {
         desc.innerText = "Lý thuyết: BFS (Breadth-First Search). Tìm đường đi ngắn nhất giữa hai đỉnh trong đồ thị không trọng số.";
         inputs.style.display = 'block';
+        btnRun.disabled = false;
     } else {
         desc.innerText = "Chọn một thuật toán để phân tích.";
+        btnRun.disabled = true; // Chế độ xem thường -> disable
     }
 }
 
@@ -217,6 +231,9 @@ function toggleAlgoInputs() {
 function runAlgorithm() {
     const algo = document.getElementById('algoSelect').value;
     const resultBox = document.getElementById('analysisResult');
+
+    // Bỏ chọn node hiện tại trước khi chạy thuật toán
+    showNodeInfo(null);
 
     if (algo === 'influence') {
         const { node: bestNode, degree: maxDegree } = findTopInfluencer(currentNodes, currentEdges);
@@ -229,7 +246,10 @@ function runAlgorithm() {
     } else if (algo === 'path') {
         const startId = parseInt(document.getElementById('startNode').value);
         const endId = parseInt(document.getElementById('endNode').value);
-        if (!startId || !endId) return;
+        if (!startId || !endId) {
+            resultBox.innerText = 'Vui lòng nhập ID bắt đầu và kết thúc.';
+            return;
+        }
 
         const path = findShortestPathBFS(startId, endId, currentEdges);
         if (path) {
@@ -515,6 +535,7 @@ function populateWeakConnectionsGrid(nodeId, weakConnections) {
 
 // Export functions to global scope for HTML onclick handlers
 window.updateLimitLabel = updateLimitLabel;
+window.updateLimitFromInput = updateLimitFromInput;
 window.applyFilter = applyFilter;
 window.toggleAlgoInputs = toggleAlgoInputs;
 window.runAlgorithm = runAlgorithm;

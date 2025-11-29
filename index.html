@@ -25,7 +25,8 @@
                 <label>Số lượng User hiển thị:</label>
                 <div class="slider-container">
                     <input type="range" id="nodeLimit" min="5" max="200" value="50" oninput="updateLimitLabel()">
-                    <span id="limitLabel" class="badge">50</span>
+                    <input type="number" id="nodeLimitInput" min="5" max="200" value="50"
+                        oninput="updateLimitFromInput()" class="limit-input">
                 </div>
                 <button class="btn-action" onclick="applyFilter()"><i class="fas fa-sync"></i> Cập nhật</button>
             </div>
@@ -42,7 +43,8 @@
                     <input type="number" id="startNode" placeholder="ID Bắt đầu">
                     <input type="number" id="endNode" placeholder="ID Kết thúc">
                 </div>
-                <button class="btn-primary" onclick="runAlgorithm()"><i class="fas fa-play"></i> Chạy Phân Tích</button>
+                <button class="btn-primary" id="btnRunAlgo" onclick="runAlgorithm()" disabled><i
+                        class="fas fa-play"></i> Chạy Phân Tích</button>
                 <button class="btn-secondary" onclick="resetGraph()"><i class="fas fa-undo"></i> Reset</button>
             </div>
             <hr>
