@@ -89,6 +89,16 @@ function drawNetwork(nodes, edges) {
             showNodeInfo(null); // Click ra ngoài thì ẩn đi
         }
     });
+
+    // Sau khi vẽ xong, reset toàn bộ màu sắc về mặc định
+    setTimeout(() => {
+        resetNodeHighlights();
+        updateConnectionsCount(0);
+        clearWeakConnectionsGrid();
+        document.getElementById('defaultMessage').style.display = 'block';
+        document.getElementById('userInfoContent').style.display = 'none';
+        document.getElementById('nodeDetails').classList.remove('is-active');
+    }, 0);
 }
 
 // 5. [NEW] Hàm hiển thị thông tin (KHÔNG CÒN CODE HTML Ở ĐÂY NỮA)
@@ -116,6 +126,7 @@ function showNodeInfo(node) {
             resetNodeHighlights();
         }
 
+        updateConnectionsCount(0);
         clearWeakConnectionsGrid();
         return;
     }
@@ -143,14 +154,16 @@ function showNodeInfo(node) {
         traitsList.innerHTML = '<span style="color:#777; font-size:12px">Không có dữ liệu</span>';
     }
 
+    const strongNeighbors = Array.from(adjacencyMap.get(node.id) || []);
     populateConnectionsGrid(node.id, connectionsGrid);
+    updateConnectionsCount(strongNeighbors.length);
 
     // Tìm và highlight weak connections (1-3 điểm chung)
     const weakConnections = findWeakConnections(node.id);
     weakConnectionsMap.set(node.id, weakConnections);
 
     if (network) {
-        const neighbors = Array.from(adjacencyMap.get(node.id) || []);
+        const neighbors = strongNeighbors;
         const weakIds = weakConnections.map(w => w.id);
 
         // Focus trước, sau đó mới highlight để không bị override
@@ -164,6 +177,13 @@ function showNodeInfo(node) {
 
     // Hiển thị weak connections trong sidebar
     populateWeakConnectionsGrid(node.id, weakConnections);
+}
+
+function updateConnectionsCount(count) {
+    const badge = document.getElementById('connectionsCount');
+    if (badge) {
+        badge.innerText = count;
+    }
 }
 
 // 6. Logic ẩn hiện input thuật toán
