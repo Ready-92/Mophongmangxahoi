@@ -479,4 +479,12 @@ function populateWeakConnectionsGrid(nodeId, weakConnections) {
     }
 }
 
+// Export functions to global scope for HTML onclick handlers (ES module)
+window.updateLimitLabel = updateLimitLabel;
+window.applyFilter = applyFilter;
+window.toggleAlgoInputs = toggleAlgoInputs;
+window.runAlgorithm = runAlgorithm;
+window.resetGraph = resetGraph;
+window.switchInfoTab = switchInfoTab;
+
 window.onload = loadGraph;
