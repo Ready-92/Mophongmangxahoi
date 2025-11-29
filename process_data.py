@@ -68,6 +68,39 @@ def _validate_users_df(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def _extract_traits_from_df(df: pd.DataFrame) -> pd.DataFrame:
+    """Trích xuất traits từ CSV nếu có, ngược lại random như cũ."""
+    # Tìm các cột trait (trait1, trait2, ... hoặc bắt đầu bằng 'trait')
+    trait_columns = [col for col in df.columns if col.lower().startswith('trait')]
+    
+    if len(trait_columns) >= 10:
+        # CSV có sẵn traits - sử dụng chúng
+        print(f"✅ Phát hiện {len(trait_columns)} cột traits trong CSV, sử dụng dữ liệu có sẵn.")
+        
+        # Tạo cột 'traits' từ các cột trait
+        def extract_row_traits(row):
+            traits = []
+            for col in trait_columns[:10]:  # Lấy tối đa 10 traits đầu
+                trait = str(row[col]).strip()
+                if trait and trait.lower() != 'nan':
+                    traits.append(trait)
+            return traits
+        
+        df['traits'] = df.apply(extract_row_traits, axis=1)
+        
+        # Kiểm tra và log
+        empty_traits = df['traits'].apply(len) == 0
+        if empty_traits.any():
+            print(f"⚠️ Cảnh báo: {empty_traits.sum()} người không có traits.")
+            
+    else:
+        # CSV không có traits - random như cũ
+        print(f"⚠️ Không tìm thấy đủ 10 cột traits trong CSV. Sẽ random {NUM_TRAITS_PER_USER} traits cho mỗi người.")
+        df['traits'] = df['id'].apply(_deterministic_traits)
+    
+    return df
+
+
 def _deterministic_traits(user_id: int) -> list:
     """Sinh danh sách traits cố định dựa trên user_id để dễ tái lập kết quả."""
     rng = random.Random(user_id)
@@ -78,6 +111,7 @@ def create_json_advanced():
     try:
         df = _read_users_csv()
         df = _validate_users_df(df)
+        df = _extract_traits_from_df(df)  # Trích xuất traits từ CSV hoặc random
         print(f"--- Đã đọc {len(df)} users hợp lệ từ file CSV ---")
 
         nodes = []
@@ -87,7 +121,8 @@ def create_json_advanced():
             user_name = row['name'] or f"User {user_id}"
             group = row['group'] or 'Unknown'
 
-            my_traits = _deterministic_traits(user_id)
+            # Sử dụng traits đã được xử lý
+            my_traits = row['traits']
             display_traits = ", ".join(my_traits)
             image_url = f"https://i.pravatar.cc/150?u={user_id}"
 

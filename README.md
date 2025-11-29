@@ -1,38 +1,44 @@
-# 🕸️ Social Network Analysis System (Hệ thống Phân tích Mạng Xã hội)
+# 🕸️ Social Network Graph Simulator
 
-Dự án mô phỏng và phân tích mạng xã hội dựa trên lý thuyết đồ thị (Graph Theory). Hệ thống được thiết kế theo mô hình **Tách biệt dữ liệu và Hiển thị**:
-* **Backend (Python):** Chịu trách nhiệm xử lý dữ liệu thô, chuẩn hóa, tính toán độ tương đồng (similarity) và tạo ra cấu trúc mạng lưới (Nodes & Edges).
-* **Frontend (Web/JS):** Chịu trách nhiệm trực quan hóa (Visualization) và tương tác người dùng.
+Dự án tái tạo mạng lưới xã hội để phân tích các kết nối, thuật toán tìm KOL và đường đi ngắn nhất dựa trên dữ liệu CSV và Vis.js.
 
-[https://ready-92.github.io/Mophongmangxahoi](https://ready-92.github.io/Mophongmangxahoi/)
+## 🧱 Cấu trúc & Luồng dữ liệu
 
-## 🚀 Tính năng & Thuật toán
+1. **`users.csv`** (hoặc `users_with_traits.csv`). Chuẩn hóa gồm `id`, `name`, `group`. Nếu có sẵn `trait1`..`trait10`, script backend sẽ dùng trực tiếp; nếu không sẽ sinh ngẫu nhiên 10 traits per người (deterministic theo `id`).
+2. **`process_data.py`**: đọc CSV, trích `traits`, so khớp theo `MIN_SHARED_TRAITS` (mặc định 4) để tạo `nodes` và `edges`, xuất `data.json`.
+3. **`main.js` + `index.html` + `style.css`**: Frontend (Vis.js) đọc `data.json`, render mạng xã hội, hỗ trợ highlight BFS, degree centrality, sidebar thông tin người dùng, glow path và reset.
 
-### 1. Xử lý dữ liệu thông minh (Python)
-* **Auto-matching:** Tự động phân tích sở thích/tính cách của User từ dữ liệu CSV.
-* **Logic kết bạn:** Sử dụng thuật toán so khớp tập hợp (Set Intersection). Hai người dùng chỉ trở thành "bạn bè" khi có số lượng sở thích chung vượt qua ngưỡng quy định (Threshold).
+## 🛠️ Scripts chính
 
-### 2. Phân tích chuyên sâu (Graph Theory)
-Hệ thống tích hợp các thuật toán Toán rời rạc để trả lời các câu hỏi về mạng lưới:
+### 1. `generate_traits_csv.py`
+```bash
+python generate_traits_csv.py --input users.csv --output users_with_traits.csv
+```
+Tạo `users_with_traits.csv` mới với 200 records và 10 traits mỗi người dựa trên kho `TRAIT_POOL`. Dùng seed kéo từ `id + group` nên luôn tái lập được kết quả.
 
-* **🔍 Tìm KOL (Degree Centrality):**
-    * *Nguyên lý:* Đỉnh (Node) nào có bậc (degree) cao nhất - tức là có nhiều kết nối nhất - sẽ là người có tầm ảnh hưởng lớn nhất.
-    * *Ứng dụng:* Xác định người nổi tiếng, trung tâm của cộng đồng.
+### 2. `process_data.py`
+```bash
+python process_data.py
+```
+Hoạt động với CSV hiện tại (mặc định `users.csv`). Ứng với `users_with_traits.csv` mới, hàm `_extract_traits_from_df()` sẽ phát hiện các cột `trait*` và dùng chúng luôn, không cần random nữa.
 
-* **apmap 6 Bậc phân cách (Six Degrees of Separation / BFS):**
-    * *Nguyên lý:* Sử dụng thuật toán **Breadth-First Search (Tìm kiếm theo chiều rộng)** để tìm đường đi ngắn nhất giữa 2 người bất kỳ.
-    * *Ý nghĩa:* Chứng minh lý thuyết "Thế giới nhỏ": Mọi người trên thế giới đều có thể kết nối với nhau qua không quá 5 người trung gian.
+### 3. Frontend
+Mở `index.html` trong trình duyệt (hoặc dùng `python -m http.server`) để xem đồ thị. Các chức năng:
+- Chọn thuật toán: `none`, `influence` (degree centrality) hoặc `path` (BFS) với glow path/border.
+- Input slider + số lượng người mới (slide/input number) cùng control run/reset.
+- Sidebar hiển thị traits, weak connections.
+Frontend không auto-zoom khi click node và luôn giữ trạng thái graph bình thường.
 
-## 🛠️ Kiến trúc Hệ thống
+## ⚙️ Cấu hình quan trọng
+- `NUM_TRAITS_PER_USER` `= 10`: theo mặc định.
+- `MIN_SHARED_TRAITS` `= 4`: threshold để tạo cạnh; giảm nếu ít kết nối.
+- `TRAIT_POOL`: bộ trait dùng để random trường hợp CSV không cung cấp.
+- Vis.js options trong `main.js` (physics, hide edges, overlay) đã tối ưu cho tối đa 200 nodes.
 
-Dự án chia làm 2 phần rõ rệt để đảm bảo tính logic và hiệu năng:
+## 🧪 Quy trình làm việc
 
-### Backend (Xử lý Logic)
-* **Ngôn ngữ:** Python 3.
-* **Thư viện:** Pandas (xử lý CSV), Random (giả lập dữ liệu thiếu).
-* **Nhiệm vụ:** Đọc `users.csv` -> Tính toán Logic kết nối -> Xuất ra `data.json`.
+1. Chạy `generate_traits_csv.py` nếu muốn data có traits rõ ràng (nhớ đặt `users_with_traits.csv`).
+2. Chạy `process_data.py` để rebuild `data.json`.
+3. Mở `index.html` để hiển thị graph, thử slider, chọn thuật toán.
 
-### Frontend (Hiển thị)
-* **Ngôn ngữ:** HTML5, CSS3, JavaScript.
-* **Thư viện:** Vis.js (Render đồ thị).
-* **Nhiệm vụ:** Đọc `data.json` -> Vẽ đồ thị -> Xử lý sự kiện click/zoom.
+Nếu cần nhiều dataset khác nhau, nhân đôi `users.csv` rồi thay input/trait columns thích hợp, script backend sẽ vẫn chạy.
