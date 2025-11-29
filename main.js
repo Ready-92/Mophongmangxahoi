@@ -52,7 +52,7 @@ function drawNetwork(nodes, edges) {
     
     const options = {
         nodes: {
-            shape: 'circularImage', // Nhận diện ảnh
+            shape: 'circularImage',
             borderWidth: 2,
             size: 25,
             color: { border: '#007acc', background: '#fff' },
@@ -72,15 +72,58 @@ function drawNetwork(nodes, edges) {
     
     network = new vis.Network(container, data, options);
     
+    // Sự kiện Click vào Node
     network.on("click", function(params) {
         if(params.nodes.length > 0) {
             const node = currentNodes.find(n => n.id === params.nodes[0]);
-            showNodeInfo(node);
+            showNodeInfo(node); // Gọi hàm hiển thị mới
+        } else {
+            showNodeInfo(null); // Click ra ngoài thì ẩn đi
         }
     });
 }
 
-// 5. Hiển thị mô tả khi chọn thuật toán
+// 5. [NEW] Hàm hiển thị thông tin (KHÔNG CÒN CODE HTML Ở ĐÂY NỮA)
+function showNodeInfo(node) {
+    const defaultMsg = document.getElementById('defaultMessage');
+    const content = document.getElementById('userInfoContent');
+    const img = document.getElementById('uAvatar');
+    const name = document.getElementById('uName');
+    const group = document.getElementById('uGroup');
+    const id = document.getElementById('uID');
+    const traitsList = document.getElementById('uTraitsList');
+
+    // Nếu không chọn ai
+    if (!node) {
+        defaultMsg.style.display = 'block';
+        content.style.display = 'none';
+        return;
+    }
+
+    // Nếu có chọn -> Hiện khung và điền dữ liệu
+    defaultMsg.style.display = 'none';
+    content.style.display = 'block';
+
+    img.src = node.image;
+    name.innerText = node.label;
+    group.innerText = node.group;
+    id.innerText = `ID: ${node.id}`;
+
+    // Tạo các thẻ tag tính cách
+    traitsList.innerHTML = ''; 
+    if (node.traits && node.traits.length > 0) {
+        node.traits.forEach(trait => {
+            const span = document.createElement('span');
+            span.className = 'trait-tag';
+            span.innerText = trait;
+            traitsList.appendChild(span);
+        });
+    } else {
+        traitsList.innerHTML = '<span style="color:#777; font-size:12px">Không có dữ liệu</span>';
+    }
+}
+
+// 6. Logic ẩn hiện input thuật toán
 function toggleAlgoInputs() {
     const algo = document.getElementById('algoSelect').value;
     const desc = document.getElementById('algoDesc');
@@ -98,13 +141,13 @@ function toggleAlgoInputs() {
     }
 }
 
-// 6. CHẠY THUẬT TOÁN (CORE LOGIC)
+// 7. CHẠY THUẬT TOÁN (CORE LOGIC - GIỮ NGUYÊN)
 function runAlgorithm() {
     const algo = document.getElementById('algoSelect').value;
     const resultBox = document.getElementById('analysisResult');
     
     if (algo === 'influence') {
-        // Thuật toán 1: Tìm KOL (Degree Centrality)
+        // Thuật toán 1: Tìm KOL
         let maxDegree = -1;
         let bestNode = null;
         
@@ -117,61 +160,33 @@ function runAlgorithm() {
         });
         
         if (bestNode) {
-            // Highlight node này
             network.selectNodes([bestNode.id]);
             network.focus(bestNode.id, { scale: 1.2, animation: true });
-            
-            resultBox.innerHTML = `
-                <strong>NGƯỜI ẢNH HƯỞNG NHẤT:</strong><br>
-                Tên: ${bestNode.label} (ID: ${bestNode.id})<br>
-                Số kết nối: ${maxDegree}<br>
-                <span style="color:yellow">Đây là "trung tâm" của mạng lưới hiện tại.</span>
-            `;
+            resultBox.innerHTML = `<strong>KOL:</strong> ${bestNode.label} (ID: ${bestNode.id}) - ${maxDegree} kết nối.`;
         }
         
     } else if (algo === 'path') {
-        // Thuật toán 2: BFS tìm đường đi ngắn nhất
+        // Thuật toán 2: BFS
         const startId = parseInt(document.getElementById('startNode').value);
         const endId = parseInt(document.getElementById('endNode').value);
         
-        if (!startId || !endId) {
-            resultBox.innerText = "Vui lòng nhập đủ ID bắt đầu và kết thúc.";
-            return;
-        }
+        if (!startId || !endId) return;
         
         const path = findShortestPathBFS(startId, endId);
         
         if (path) {
-            // Highlight đường đi
-            const edgeIds = [];
-            for (let i = 0; i < path.length - 1; i++) {
-                // Tìm edge nối 2 node liên tiếp
-                const edge = currentEdges.find(e => 
-                    (e.from === path[i] && e.to === path[i+1]) || 
-                    (e.from === path[i+1] && e.to === path[i])
-                );
-                if(edge) edgeIds.push(edge.id); // Vis.js tự sinh ID cho edge nếu ko có, cần check lại dataset
-            }
-            
             network.setSelection({ nodes: path }, { highlightEdges: false });
-            // BFS chỉ trả về nodes, ta cần highlight thủ công (đơn giản hoá là focus node đích)
             network.focus(endId, { animation: true });
-            
-            resultBox.innerHTML = `
-                <strong>ĐƯỜNG ĐI NGẮN NHẤT (BFS):</strong><br>
-                Độ dài: ${path.length - 1} bước.<br>
-                Lộ trình: ${path.join(" ➔ ")}
-            `;
+            resultBox.innerHTML = `<strong>BFS:</strong> ${path.length - 1} bước. Lộ trình: ${path.join(" ➔ ")}`;
         } else {
-            resultBox.innerText = "Không tìm thấy đường đi giữa 2 người này (họ không thuộc cùng 1 cộng đồng).";
+            resultBox.innerText = "Không tìm thấy đường đi.";
         }
     }
 }
 
-// Thuật toán BFS thuần túy
+// Thuật toán BFS thuần túy (GIỮ NGUYÊN)
 function findShortestPathBFS(start, end) {
     if (start === end) return [start];
-    
     let queue = [[start]];
     let visited = new Set();
     visited.add(start);
@@ -179,18 +194,14 @@ function findShortestPathBFS(start, end) {
     while (queue.length > 0) {
         let path = queue.shift();
         let node = path[path.length - 1];
-        
-        // Tìm các hàng xóm
         let neighbors = [];
         currentEdges.forEach(e => {
             if (e.from === node && !visited.has(e.to)) neighbors.push(e.to);
             if (e.to === node && !visited.has(e.from)) neighbors.push(e.from);
         });
-        
         for (let neighbor of neighbors) {
             let newPath = [...path, neighbor];
             if (neighbor === end) return newPath;
-            
             visited.add(neighbor);
             queue.push(newPath);
         }
@@ -198,48 +209,15 @@ function findShortestPathBFS(start, end) {
     return null;
 }
 
-// Reset về trạng thái ban đầu
 function resetGraph() {
     network.unselectAll();
     network.fit();
     document.getElementById('analysisResult').innerText = "Đã reset.";
 }
 
-// Thống kê cơ bản
 function updateStats() {
     const stats = `Nodes: ${currentNodes.length} | Edges: ${currentEdges.length}`;
     document.getElementById('graphStats').innerText = stats;
 }
 
-function showNodeInfo(node) {
-    // Xử lý hiển thị tính cách dạng thẻ (Tags)
-    let traitsHtml = '';
-    if (node.traits && node.traits.length > 0) {
-        traitsHtml = node.traits.map(t => 
-            `<span style="background:#2d2d2d; color:#4ec9b0; padding:2px 8px; margin:2px; border-radius:10px; font-size:11px; display:inline-block; border:1px solid #3e3e42;">${t}</span>`
-        ).join('');
-    } else {
-        traitsHtml = '<span style="color:#777">Không có dữ liệu</span>';
-    }
-
-    document.getElementById('nodeDetails').innerHTML = `
-        <div style="display:flex; align-items:center; gap:15px; margin-bottom:15px;">
-            <img src="${node.image}" style="width:60px;height:60px;border-radius:50%; border:2px solid #007acc; object-fit:cover;">
-            <div>
-                <strong style="font-size:16px; display:block; margin-bottom:4px;">${node.label}</strong>
-                <span style="background:#007acc; color:white; padding:2px 6px; border-radius:4px; font-size:10px;">${node.group}</span>
-                <span style="color:#aaa; font-size:12px; margin-left:5px;">ID: ${node.id}</span>
-            </div>
-        </div>
-        
-        <div style="background:#1e1e1e; padding:10px; border-radius:6px; border:1px solid #333;">
-            <div style="font-size:12px; color:#888; margin-bottom:8px; text-transform:uppercase; font-weight:bold;">
-                <i class="fas fa-fingerprint"></i> 10 Đặc điểm nhận dạng
-            </div>
-            <div style="line-height:1.6;">
-                ${traitsHtml}
-            </div>
-        </div>
-    `;
-}
 window.onload = loadGraph;
