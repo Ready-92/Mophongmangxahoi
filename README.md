@@ -4,7 +4,7 @@ Dự án mô phỏng và phân tích mạng xã hội dựa trên lý thuyết �
 * **Backend (Python):** Chịu trách nhiệm xử lý dữ liệu thô, chuẩn hóa, tính toán độ tương đồng (similarity) và tạo ra cấu trúc mạng lưới (Nodes & Edges).
 * **Frontend (Web/JS):** Chịu trách nhiệm trực quan hóa (Visualization) và tương tác người dùng.
 
-![Demo Screenshot](./demo-image.png)
+[https://ready-92.github.io/Mophongmangxahoi](https://ready-92.github.io/Mophongmangxahoi/)
 
 ## 🚀 Tính năng & Thuật toán
 
