@@ -1,67 +1,60 @@
 import pandas as pd
 import json
-import networkx as nx
 import random
 
-# --- CẤU HÌNH TỶ LỆ KẾT BẠN ---
-PROB_SAME_GROUP = 0.15 
-PROB_DIFF_GROUP = 0.01
-
-try:
-    df_users = pd.read_csv('users.csv')
-    print(f"✅ Đã đọc được {len(df_users)} người dùng.")
-except Exception as e:
-    print("❌ Lỗi: Không tìm thấy file users.csv.")
-    exit()
-
-nodes = []
-edges = []
-G = nx.Graph()
-
-# 2. Xử lý User
-print("⏳ Đang xử lý dữ liệu...")
-user_list = []
-
-for index, row in df_users.iterrows():
-    user_id = int(row['id'])
-    group = str(row['group'])
-    
-    # Tạo node
-    user_obj = {
-        "id": user_id,
-        "label": str(row['label']),
-        "group": group,
-        "image": f"https://i.pravatar.cc/150?u={user_id}",
-        "shape": "circularImage",
-        "title": f"ID: {user_id}\nGroup: {group}"
-    }
-    nodes.append(user_obj)
-    user_list.append(user_obj)
-
-# 3. Kết bạn ngẫu nhiên
-print("⏳ Đang tạo kết nối...")
-for i in range(len(user_list)):
-    for j in range(i + 1, len(user_list)):
-        u1 = user_list[i]
-        u2 = user_list[j]
+def create_json():
+    try:
+        # 1. Đọc file CSV
+        df = pd.read_csv('users.csv')
         
-        p = PROB_SAME_GROUP if u1['group'] == u2['group'] else PROB_DIFF_GROUP
+        nodes = []
+        ids_list = []
+
+        # 2. Tạo danh sách Nodes (Người dùng)
+        for index, row in df.iterrows():
+            user_id = int(row.get('id', index + 1))
+            name = str(row.get('name', f"User {user_id}"))
+            group = str(row.get('group', 'Nhóm 1'))
             
-        if random.random() < p:
-            edges.append({"from": u1['id'], "to": u2['id']})
-            G.add_edge(u1['id'], u2['id'])
+            # Tạo link ảnh avatar ngẫu nhiên theo ID
+            image_url = f"https://i.pravatar.cc/150?u={user_id}"
 
-# 4. Tính độ nổi tiếng (Size)
-degrees = dict(G.degree())
-for node in nodes:
-    d = degrees.get(node['id'], 0)
-    node['value'] = 15 + (d * 2) 
+            node = {
+                "id": user_id,
+                "label": name,
+                "group": group,
+                "image": image_url,
+                "shape": "circularImage",  # Quan trọng: Để hiển thị ảnh tròn
+                "title": f"ID: {user_id}\nGroup: {group}",
+                "value": random.randint(15, 30) # Kích thước node
+            }
+            nodes.append(node)
+            ids_list.append(user_id)
 
-# 5. XUẤT RA FILE .JSON (Sửa lại chỗ này cho khớp với web)
-final_data = {"nodes": nodes, "edges": edges}
+        # 3. Tạo danh sách Edges (Kết nối ngẫu nhiên)
+        edges = []
+        for current_id in ids_list:
+            # Mỗi người kết nối ngẫu nhiên với 1-3 người khác
+            num_connections = random.randint(1, 3)
+            targets = random.sample(ids_list, min(len(ids_list), num_connections))
+            
+            for target_id in targets:
+                if current_id != target_id:
+                    edges.append({
+                        "from": current_id, 
+                        "to": target_id
+                    })
 
-# Ghi thẳng ra file JSON chuẩn
-with open('data.json', 'w', encoding='utf-8') as f:
-    json.dump(final_data, f, ensure_ascii=False, indent=2)
+        # 4. Xuất ra file JSON
+        final_data = {"nodes": nodes, "edges": edges}
+        
+        with open('data.json', 'w', encoding='utf-8') as f:
+            json.dump(final_data, f, ensure_ascii=False, indent=4)
+            
+        print(f"✅ Đã tạo data.json thành công! ({len(nodes)} users)")
 
-print(f"✅ XONG! Đã tạo file 'data.json' với {len(edges)} mối quan hệ.")
+    except Exception as e:
+        print(f"❌ Lỗi: {e}")
+
+if __name__ == "__main__":
+    create_json()
