@@ -61,27 +61,93 @@ function drawNetwork(nodes, edges) {
         edges: new vis.DataSet(edges)
     };
 
+    // Điều chỉnh physics động theo số lượng node
+    const nodeCount = nodes.length;
+    let physicsConfig;
+
+    if (nodeCount <= 50) {
+        // Mạng nhỏ: physics bình thường
+        physicsConfig = {
+            enabled: true,
+            barnesHut: {
+                gravitationalConstant: -4000,
+                springLength: 120,
+                springConstant: 0.04,
+                damping: 0.09
+            },
+            stabilization: {
+                enabled: true,
+                iterations: 200,
+                updateInterval: 25
+            }
+        };
+    } else if (nodeCount <= 100) {
+        // Mạng trung bình: tăng khoảng cách
+        physicsConfig = {
+            enabled: true,
+            barnesHut: {
+                gravitationalConstant: -15000,
+                springLength: 300,
+                springConstant: 0.02,
+                damping: 0.15,
+                avoidOverlap: 1
+            },
+            stabilization: {
+                enabled: true,
+                iterations: 800,
+                updateInterval: 50
+            }
+        };
+    } else {
+        // Mạng lớn (>100): nới rộng tối đa
+        physicsConfig = {
+            enabled: true,
+            barnesHut: {
+                gravitationalConstant: -25000,
+                springLength: 400,
+                springConstant: 0.01,
+                damping: 0.25,
+                avoidOverlap: 1
+            },
+            stabilization: {
+                enabled: true,
+                iterations: 1500,
+                updateInterval: 100,
+                fit: true
+            },
+            maxVelocity: 25,
+            minVelocity: 0.3
+        };
+    }
+
     const options = {
         nodes: {
             shape: 'circularImage',
             borderWidth: 2,
-            size: 25,
+            size: nodeCount > 100 ? 20 : 25,
             color: { border: '#007acc', background: '#fff' },
-            font: { color: '#fff' }
+            font: { color: '#fff', size: nodeCount > 100 ? 10 : 14 }
         },
         edges: {
             color: { color: '#555', highlight: '#ff0000' },
             width: 1,
-            smooth: { type: 'continuous' }
+            smooth: nodeCount > 100 ? false : { type: 'continuous' }
         },
-        physics: {
-            enabled: true,
-            barnesHut: { gravitationalConstant: -4000, springLength: 120 }
-        },
-        interaction: { hover: true }
+        physics: physicsConfig,
+        interaction: { hover: true, zoomView: true, dragView: true }
     };
 
     network = new vis.Network(container, data, options);
+
+    // Hiển thị trạng thái ổn định hóa cho mạng lớn
+    if (nodeCount > 50) {
+        const resultBox = document.getElementById('analysisResult');
+        resultBox.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang ổn định đồ thị...';
+
+        network.once('stabilizationIterationsDone', function () {
+            resultBox.innerHTML = 'Đồ thị đã ổn định.';
+        });
+    }
 
     // Sự kiện Click vào Node
     network.on("click", function (params) {
