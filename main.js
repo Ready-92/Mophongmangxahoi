@@ -212,16 +212,34 @@ function updateStats() {
 }
 
 function showNodeInfo(node) {
+    // Xử lý hiển thị tính cách dạng thẻ (Tags)
+    let traitsHtml = '';
+    if (node.traits && node.traits.length > 0) {
+        traitsHtml = node.traits.map(t => 
+            `<span style="background:#2d2d2d; color:#4ec9b0; padding:2px 8px; margin:2px; border-radius:10px; font-size:11px; display:inline-block; border:1px solid #3e3e42;">${t}</span>`
+        ).join('');
+    } else {
+        traitsHtml = '<span style="color:#777">Không có dữ liệu</span>';
+    }
+
     document.getElementById('nodeDetails').innerHTML = `
-        <div style="display:flex; align-items:center; gap:10px;">
-            <img src="${node.image}" style="width:40px;height:40px;border-radius:50%">
+        <div style="display:flex; align-items:center; gap:15px; margin-bottom:15px;">
+            <img src="${node.image}" style="width:60px;height:60px;border-radius:50%; border:2px solid #007acc; object-fit:cover;">
             <div>
-                <strong>${node.label}</strong><br>
-                ID: ${node.id}
+                <strong style="font-size:16px; display:block; margin-bottom:4px;">${node.label}</strong>
+                <span style="background:#007acc; color:white; padding:2px 6px; border-radius:4px; font-size:10px;">${node.group}</span>
+                <span style="color:#aaa; font-size:12px; margin-left:5px;">ID: ${node.id}</span>
             </div>
         </div>
-        <div style="margin-top:5px; font-size:12px;">Nhóm: ${node.group}</div>
+        
+        <div style="background:#1e1e1e; padding:10px; border-radius:6px; border:1px solid #333;">
+            <div style="font-size:12px; color:#888; margin-bottom:8px; text-transform:uppercase; font-weight:bold;">
+                <i class="fas fa-fingerprint"></i> 10 Đặc điểm nhận dạng
+            </div>
+            <div style="line-height:1.6;">
+                ${traitsHtml}
+            </div>
+        </div>
     `;
 }
-
 window.onload = loadGraph;
