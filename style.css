@@ -58,11 +58,13 @@ body {
     box-shadow: -2px 0 10px rgba(0,0,0,0.3);
 }
 
+
+
 .app-title {
-    margin: 0 0 10px 0;
-    color: var(--accent-color);
-    font-size: 22px;
-    text-transform: uppercase;
+    color: var(--text-color);
+    font-weight: 600;
+    font-size: 25px;
+    text-transform: center;
     letter-spacing: 1px;
 }
 
