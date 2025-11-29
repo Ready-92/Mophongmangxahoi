@@ -61,12 +61,11 @@ function drawNetwork(nodes, edges) {
         edges: new vis.DataSet(edges)
     };
 
-    // Điều chỉnh physics động theo số lượng node
+    // Điều chỉnh physics động theo số lượng node - TỐI ƯU HIỆU NĂNG
     const nodeCount = nodes.length;
     let physicsConfig;
 
     if (nodeCount <= 50) {
-        // Mạng nhỏ: physics bình thường
         physicsConfig = {
             enabled: true,
             barnesHut: {
@@ -75,48 +74,34 @@ function drawNetwork(nodes, edges) {
                 springConstant: 0.04,
                 damping: 0.09
             },
-            stabilization: {
-                enabled: true,
-                iterations: 200,
-                updateInterval: 25
-            }
+            stabilization: { enabled: true, iterations: 150, updateInterval: 50 }
         };
     } else if (nodeCount <= 100) {
-        // Mạng trung bình: tăng khoảng cách
         physicsConfig = {
             enabled: true,
             barnesHut: {
                 gravitationalConstant: -15000,
                 springLength: 300,
                 springConstant: 0.02,
-                damping: 0.15,
+                damping: 0.2,
                 avoidOverlap: 1
             },
-            stabilization: {
-                enabled: true,
-                iterations: 800,
-                updateInterval: 50
-            }
+            stabilization: { enabled: true, iterations: 300, updateInterval: 100 }
         };
     } else {
-        // Mạng lớn (>100): nới rộng tối đa
+        // Mạng lớn: tắt physics sau khi ổn định để tăng hiệu năng
         physicsConfig = {
             enabled: true,
             barnesHut: {
                 gravitationalConstant: -25000,
                 springLength: 400,
                 springConstant: 0.01,
-                damping: 0.25,
+                damping: 0.3,
                 avoidOverlap: 1
             },
-            stabilization: {
-                enabled: true,
-                iterations: 1500,
-                updateInterval: 100,
-                fit: true
-            },
-            maxVelocity: 25,
-            minVelocity: 0.3
+            stabilization: { enabled: true, iterations: 500, updateInterval: 100, fit: true },
+            maxVelocity: 50,
+            minVelocity: 0.75
         };
     }
 
@@ -124,28 +109,36 @@ function drawNetwork(nodes, edges) {
         nodes: {
             shape: 'circularImage',
             borderWidth: 2,
-            size: nodeCount > 100 ? 20 : 25,
+            size: nodeCount > 100 ? 18 : (nodeCount > 50 ? 22 : 25),
             color: { border: '#007acc', background: '#fff' },
-            font: { color: '#fff', size: nodeCount > 100 ? 10 : 14 }
+            font: { color: '#fff', size: nodeCount > 100 ? 10 : 12 }
         },
         edges: {
             color: { color: '#555', highlight: '#ff0000' },
             width: 1,
-            smooth: nodeCount > 100 ? false : { type: 'continuous' }
+            smooth: false // Tắt smooth để tăng hiệu năng
         },
         physics: physicsConfig,
-        interaction: { hover: true, zoomView: true, dragView: true }
+        interaction: {
+            hover: nodeCount <= 100, // Tắt hover cho mạng lớn
+            zoomView: true,
+            dragView: true,
+            hideEdgesOnDrag: nodeCount > 50,
+            hideEdgesOnZoom: nodeCount > 50
+        }
     };
 
     network = new vis.Network(container, data, options);
 
-    // Hiển thị trạng thái ổn định hóa cho mạng lớn
+    // Hiển thị trạng thái ổn định hóa và tắt physics sau khi xong
     if (nodeCount > 50) {
         const resultBox = document.getElementById('analysisResult');
         resultBox.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang ổn định đồ thị...';
 
         network.once('stabilizationIterationsDone', function () {
-            resultBox.innerHTML = 'Đồ thị đã ổn định.';
+            // Tắt physics sau khi ổn định để tăng hiệu năng
+            network.setOptions({ physics: { enabled: false } });
+            resultBox.innerHTML = `Đồ thị đã ổn định (${nodeCount} nodes).`;
         });
     }
 
