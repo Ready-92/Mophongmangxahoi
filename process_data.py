@@ -1,6 +1,7 @@
 import pandas as pd
 import json
 import random
+from collections import defaultdict
 
 # ================= CẤU HÌNH LOGIC =================
 # 1. Số lượng tính cách mỗi người sẽ có
@@ -31,32 +32,63 @@ TRAIT_POOL = [
 ]
 # ===================================================
 
+def _read_users_csv(path='users.csv'):
+    """Đọc CSV với logging rõ ràng khi phải fallback encoding."""
+    try:
+        df = pd.read_csv(path, skipinitialspace=True, encoding='utf-8-sig')
+        print("✅ Đọc CSV bằng UTF-8 thành công.")
+        return df
+    except UnicodeError:
+        print("⚠️ UTF-8 thất bại, thử đọc bằng UTF-16...")
+        df = pd.read_csv(path, skipinitialspace=True, encoding='utf-16')
+        print("✅ Đọc CSV bằng UTF-16 thành công.")
+        return df
+
+
+def _validate_users_df(df: pd.DataFrame) -> pd.DataFrame:
+    required_columns = {'id', 'name', 'group'}
+    missing = required_columns - set(df.columns.str.lower())
+    if missing:
+        raise ValueError(f"Thiếu cột bắt buộc trong users.csv: {', '.join(missing)}")
+
+    # Chuẩn hóa tên cột về chữ thường để tránh lỗi viết hoa/thường.
+    df = df.rename(columns={col: col.lower() for col in df.columns})
+
+    if df['id'].isnull().any():
+        raise ValueError("Cột 'id' không được để trống.")
+
+    df['id'] = df['id'].astype(int)
+    if df['id'].duplicated().any():
+        dup_ids = df.loc[df['id'].duplicated(), 'id'].tolist()
+        raise ValueError(f"ID bị trùng lặp: {dup_ids}")
+
+    df['name'] = df['name'].fillna('').astype(str).str.strip()
+    df['group'] = df['group'].fillna('Unknown').astype(str)
+
+    return df
+
+
+def _deterministic_traits(user_id: int) -> list:
+    """Sinh danh sách traits cố định dựa trên user_id để dễ tái lập kết quả."""
+    rng = random.Random(user_id)
+    return rng.sample(TRAIT_POOL, NUM_TRAITS_PER_USER)
+
+
 def create_json_advanced():
     try:
-        # 1. Đọc file CSV (Chỉ cần ID, Name, Group)
-        try:
-            df = pd.read_csv('users.csv', skipinitialspace=True, encoding='utf-8-sig')
-        except:
-            df = pd.read_csv('users.csv', skipinitialspace=True, encoding='utf-16')
-
-        print(f"--- Đã đọc {len(df)} users từ file CSV ---")
+        df = _read_users_csv()
+        df = _validate_users_df(df)
+        print(f"--- Đã đọc {len(df)} users hợp lệ từ file CSV ---")
 
         nodes = []
-        
-        # 2. Tạo danh sách Nodes và Random Tính cách
-        for index, row in df.iterrows():
-            user_id = int(row.get('id', index + 1))
-            user_name = row.get('name', f"User {user_id}")
-            group = row.get('group', 'Unknown')
-            
-            # --- LOGIC RANDOM TÍNH CÁCH ---
-            # Lấy ngẫu nhiên 10 tính cách KHÔNG TRÙNG nhau từ kho
-            my_traits = random.sample(TRAIT_POOL, NUM_TRAITS_PER_USER)
-            
-            # Tạo chuỗi hiển thị đẹp
-            display_traits = ", ".join(my_traits)
 
-            # Link ảnh (Giả lập)
+        for _, row in df.iterrows():
+            user_id = int(row['id'])
+            user_name = row['name'] or f"User {user_id}"
+            group = row['group'] or 'Unknown'
+
+            my_traits = _deterministic_traits(user_id)
+            display_traits = ", ".join(my_traits)
             image_url = f"https://i.pravatar.cc/150?u={user_id}"
 
             node = {
@@ -65,51 +97,51 @@ def create_json_advanced():
                 "group": str(group),
                 "image": image_url,
                 "shape": "circularImage",
-                "traits": my_traits,          # List dùng để tính toán
-                "display_traits": display_traits, # Chuỗi dùng để hiển thị
+                "traits": my_traits,
+                "display_traits": display_traits,
                 "title": f"Tên: {user_name}\nNhóm: {group}\n\nSở thích:\n- " + "\n- ".join(my_traits),
                 "value": 20
             }
             nodes.append(node)
 
-        # 3. LOGIC KẾT BẠN (So khớp phức tạp)
-        edges = []
-        connection_count = 0
-        
         print(f"--- Đang so khớp (Mỗi người {NUM_TRAITS_PER_USER} tính cách, cần trùng >= {MIN_SHARED_TRAITS}) ---")
 
-        for i in range(len(nodes)):
-            for j in range(i + 1, len(nodes)): 
-                user_a = nodes[i]
-                user_b = nodes[j]
+        trait_to_users = defaultdict(list)
+        shared_traits = defaultdict(set)
 
-                # Tìm điểm chung
-                set_a = set(user_a['traits'])
-                set_b = set(user_b['traits'])
-                shared = list(set_a.intersection(set_b))
-                
-                # Nếu số điểm chung >= Ngưỡng
-                if len(shared) >= MIN_SHARED_TRAITS:
-                    edges.append({
-                        "from": user_a['id'],
-                        "to": user_b['id'],
-                        "title": f"Chung {len(shared)} điểm: {', '.join(shared)}" # Tooltip khi hover vào dây
-                    })
-                    connection_count += 1
+        for node in nodes:
+            user_id = node['id']
+            for trait in node['traits']:
+                for other_id in trait_to_users[trait]:
+                    key = tuple(sorted((user_id, other_id)))
+                    shared_traits[key].add(trait)
+                trait_to_users[trait].append(user_id)
 
-        # 4. Xuất file JSON
+        edges = []
+        for (user_a, user_b), traits in shared_traits.items():
+            if len(traits) >= MIN_SHARED_TRAITS:
+                trait_list = ', '.join(sorted(traits))
+                edges.append({
+                    "from": user_a,
+                    "to": user_b,
+                    "title": f"Chung {len(traits)} điểm: {trait_list}"
+                })
+
         final_data = {"nodes": nodes, "edges": edges}
         with open('data.json', 'w', encoding='utf-8') as f:
             json.dump(final_data, f, ensure_ascii=False, indent=4)
-            
-        print(f"------------------------------------------------")
-        print(f"✅ XONG! Đã tạo {connection_count} kết nối.")
-        print(f"📊 Trung bình mỗi người có: {round(connection_count * 2 / len(nodes), 1)} bạn bè.")
-        if connection_count == 0:
+
+        print("------------------------------------------------")
+        print(f"✅ XONG! Đã tạo {len(edges)} kết nối.")
+        if nodes:
+            avg_friends = round(len(edges) * 2 / len(nodes), 1)
+            print(f"📊 Trung bình mỗi người có: {avg_friends} bạn bè.")
+        if not edges:
             print("⚠️ CẢNH BÁO: Không có kết nối nào! Hãy giảm 'MIN_SHARED_TRAITS' xuống 3.")
 
     except Exception as e:
         print(f"❌ Lỗi: {e}")
+
 
 if __name__ == "__main__":
     create_json_advanced()
