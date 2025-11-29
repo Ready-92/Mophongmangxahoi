@@ -18,8 +18,8 @@ TRAIT_POOL = [
 TRAITS_PER_USER = 10
 
 
-def pick_traits_for_user(user_id: int, group: str) -> list:
-    seed = f"{group}-{user_id}"
+def pick_traits_for_user(user_id: int, identity: str) -> list:
+    seed = f"{identity}-{user_id}"
     rng = random.Random(seed)
     return rng.sample(TRAIT_POOL, TRAITS_PER_USER)
 

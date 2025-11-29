@@ -170,7 +170,7 @@ function showNodeInfo(node) {
 
     img.src = node.image;
     name.innerText = node.label;
-    group.innerText = node.group;
+    group.innerText = node.sex || 'Không rõ';
     id.innerText = `ID: ${node.id}`;
 
     traitsList.innerHTML = '';

@@ -46,14 +46,20 @@ def _read_users_csv(path='users.csv'):
 
 
 def _validate_users_df(df: pd.DataFrame) -> pd.DataFrame:
-    required_columns = {'id', 'name', 'group'}
+    required_columns = {'id', 'name'}
     missing = required_columns - set(df.columns.str.lower())
     if missing:
         raise ValueError(f"Thiếu cột bắt buộc trong users.csv: {', '.join(missing)}")
 
-    # Chuẩn hóa tên cột về chữ thường để tránh lỗi viết hoa/thường.
-    df = df.rename(columns={col: col.lower() for col in df.columns})
+    normalized = {col: col.lower() for col in df.columns}
+    df = df.rename(columns=normalized)
 
+    has_sex = 'sex' in df.columns
+    has_group = 'group' in df.columns
+    if not has_sex and not has_group:
+        raise ValueError("Cần có chí ít một cột 'sex' hoặc 'group'.")
+
+    # Chuẩn hóa tên cột về chữ thường để tránh lỗi viết hoa/thường.
     if df['id'].isnull().any():
         raise ValueError("Cột 'id' không được để trống.")
 
@@ -63,7 +69,10 @@ def _validate_users_df(df: pd.DataFrame) -> pd.DataFrame:
         raise ValueError(f"ID bị trùng lặp: {dup_ids}")
 
     df['name'] = df['name'].fillna('').astype(str).str.strip()
-    df['group'] = df['group'].fillna('Unknown').astype(str)
+    if has_sex:
+        df['sex'] = df['sex'].fillna('Unknown').astype(str)
+    if has_group:
+        df['group'] = df['group'].fillna('Unknown').astype(str)
 
     return df
 
@@ -119,7 +128,7 @@ def create_json_advanced():
         for _, row in df.iterrows():
             user_id = int(row['id'])
             user_name = row['name'] or f"User {user_id}"
-            group = row['group'] or 'Unknown'
+            sex = row.get('sex') or row.get('group') or 'Unknown'
 
             # Sử dụng traits đã được xử lý
             my_traits = row['traits']
@@ -129,12 +138,12 @@ def create_json_advanced():
             node = {
                 "id": user_id,
                 "label": str(user_name),
-                "group": str(group),
+                "sex": str(sex),
                 "image": image_url,
                 "shape": "circularImage",
                 "traits": my_traits,
                 "display_traits": display_traits,
-                "title": f"Tên: {user_name}\nNhóm: {group}\n\nSở thích:\n- " + "\n- ".join(my_traits),
+                "title": f"Tên: {user_name}\nGiới tính: {sex}\n\nSở thích:\n- " + "\n- ".join(my_traits),
                 "value": 20
             }
             nodes.append(node)

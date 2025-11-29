@@ -4,7 +4,7 @@ Dự án tái tạo mạng lưới xã hội để phân tích các kết nối,
 
 ## 🧱 Cấu trúc & Luồng dữ liệu
 
-1. **`users.csv`** (hoặc `users_with_traits.csv`). Chuẩn hóa gồm `id`, `name`, `group`. Nếu có sẵn `trait1`..`trait10`, script backend sẽ dùng trực tiếp; nếu không sẽ sinh ngẫu nhiên 10 traits per người (deterministic theo `id`).
+1. **`users.csv`** (hoặc `users_with_traits.csv`). Chuẩn hóa gồm `id`, `name`, `sex`. Script backend sẽ dùng cột `sex` để hiển thị và xác định hành vi seed trait; nếu cần lưu thêm `group` cũ thì giữ như metadata nhưng không bắt buộc.
 2. **`process_data.py`**: đọc CSV, trích `traits`, so khớp theo `MIN_SHARED_TRAITS` (mặc định 4) để tạo `nodes` và `edges`, xuất `data.json`.
 3. **`main.js` + `index.html` + `style.css`**: Frontend (Vis.js) đọc `data.json`, render mạng xã hội, hỗ trợ highlight BFS, degree centrality, sidebar thông tin người dùng, glow path và reset.
 
@@ -14,7 +14,7 @@ Dự án tái tạo mạng lưới xã hội để phân tích các kết nối,
 ```bash
 python generate_traits_csv.py --input users.csv --output users_with_traits.csv
 ```
-Tạo `users_with_traits.csv` mới với 200 records và 10 traits mỗi người dựa trên kho `TRAIT_POOL`. Dùng seed kéo từ `id + group` nên luôn tái lập được kết quả.
+Tạo `users_with_traits.csv` mới với 200 records và 10 traits mỗi người dựa trên kho `TRAIT_POOL`. Dùng seed kéo từ `sex + id` nên luôn tái lập được cùng tập traits.
 
 ### 2. `process_data.py`
 ```bash
