@@ -13,9 +13,7 @@
     <div class="container">
         <div class="graph-area">
             <div id="network"></div>
-            <div class="overlay-info" id="graphStats">
-                Đang tải dữ liệu...
-            </div>
+            <div class="overlay-info" id="graphStats">Đang tải dữ liệu...</div>
         </div>
 
         <div class="sidebar">
@@ -27,13 +25,9 @@
                     <input type="range" id="nodeLimit" min="5" max="200" value="50" oninput="updateLimitLabel()">
                     <span id="limitLabel" class="badge">50</span>
                 </div>
-                <button class="btn-action" onclick="applyFilter()">
-                    <i class="fas fa-sync"></i> Cập nhật
-                </button>
+                <button class="btn-action" onclick="applyFilter()"><i class="fas fa-sync"></i> Cập nhật</button>
             </div>
-
             <hr>
-
             <div class="control-group">
                 <label>Thuật toán (Toán rời rạc):</label>
                 <select id="algoSelect" onchange="toggleAlgoInputs()">
@@ -41,37 +35,43 @@
                     <option value="influence">Tìm KOL (Degree Centrality)</option>
                     <option value="path">Tìm đường đi ngắn nhất (BFS)</option>
                 </select>
-                
-                <div class="algo-desc" id="algoDesc">
-                    Chọn một thuật toán để phân tích đồ thị.
-                </div>
-
+                <div class="algo-desc" id="algoDesc">Chọn một thuật toán để phân tích đồ thị.</div>
                 <div id="pathInputs" style="display: none; margin-top: 10px;">
-                    <input type="number" id="startNode" placeholder="ID Người bắt đầu (VD: 1)">
-                    <input type="number" id="endNode" placeholder="ID Người kết thúc (VD: 10)">
+                    <input type="number" id="startNode" placeholder="ID Bắt đầu">
+                    <input type="number" id="endNode" placeholder="ID Kết thúc">
                 </div>
-
-                <button class="btn-primary" onclick="runAlgorithm()">
-                    <i class="fas fa-play"></i> Chạy Phân Tích
-                </button>
-                <button class="btn-secondary" onclick="resetGraph()">
-                    <i class="fas fa-undo"></i> Reset
-                </button>
+                <button class="btn-primary" onclick="runAlgorithm()"><i class="fas fa-play"></i> Chạy Phân Tích</button>
+                <button class="btn-secondary" onclick="resetGraph()"><i class="fas fa-undo"></i> Reset</button>
             </div>
-
             <hr>
-
             <div class="control-group">
                 <label><i class="fas fa-chart-line"></i> Kết quả Phân tích:</label>
-                <div id="analysisResult" class="result-box">
-                    Chưa có kết quả.
-                </div>
+                <div id="analysisResult" class="result-box">Chưa có kết quả.</div>
             </div>
 
             <div class="control-group">
                 <label>Chi tiết User đang chọn:</label>
                 <div id="nodeDetails" class="user-card">
-                    <em>Click vào node để xem</em>
+                    
+                    <div id="defaultMessage"><em>Click vào node để xem</em></div>
+
+                    <div id="userInfoContent">
+                        <div class="user-header">
+                            <img id="uAvatar" class="user-avatar" src="" alt="Avatar">
+                            <div>
+                                <strong id="uName" class="user-name">User Name</strong>
+                                <span id="uGroup" class="user-group">Group</span>
+                                <span id="uID" class="user-id">ID: 0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="traits-box">
+                            <div class="traits-title"><i class="fas fa-fingerprint"></i> 10 Đặc điểm nhận dạng</div>
+                            <div id="uTraitsList" style="line-height:1.6;">
+                                </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
