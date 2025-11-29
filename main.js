@@ -7,6 +7,7 @@ let adjacencyMap = new Map();
 let nodeMap = new Map();
 let connectionDetails = new Map();
 let weakConnectionsMap = new Map(); // Lưu những người có 1-3 điểm chung
+const DEFAULT_BORDER_COLOR = '#007acc';
 
 // 1. Tải dữ liệu ban đầu
 async function loadGraph() {
@@ -112,7 +113,10 @@ function showNodeInfo(node) {
 
         if (network) {
             network.unselectAll();
+            resetNodeHighlights();
         }
+
+        clearWeakConnectionsGrid();
         return;
     }
 
@@ -379,7 +383,7 @@ function highlightConnections(selectedId, strongIds, weakIds) {
     const updates = [];
 
     allNodeIds.forEach(id => {
-        let borderColor = '#555'; // Mặc định
+        let borderColor = DEFAULT_BORDER_COLOR; // Mặc định
         let borderWidth = 2;
         let shadow = false;
         let shadowColor = '';
@@ -409,6 +413,17 @@ function highlightConnections(selectedId, strongIds, weakIds) {
         });
     });
 
+    network.body.data.nodes.update(updates);
+}
+
+function resetNodeHighlights() {
+    if (!network) return;
+    const updates = currentNodes.map(node => ({
+        id: node.id,
+        color: { border: DEFAULT_BORDER_COLOR },
+        borderWidth: 2,
+        shadow: { enabled: false }
+    }));
     network.body.data.nodes.update(updates);
 }
 
