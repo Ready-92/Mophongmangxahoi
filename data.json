@@ -25,7 +25,7 @@
         {
             "id": 2,
             "label": "Lê Thị Minh Ngọc",
-            "sex": "Nam",
+            "sex": "Nữ",
             "image": "https://i.pravatar.cc/150?u=2",
             "shape": "circularImage",
             "traits": [
@@ -41,7 +41,7 @@
                 "Hướng ngoại"
             ],
             "display_traits": "Dùng iPhone, Bơi lội, Lãng mạn, Thích Gym, Nghiện Trà sữa, Nhạc Rock, Thẳng thắn, Mê Anime, Lạnh lùng, Hướng ngoại",
-            "title": "Tên: Lê Thị Minh Ngọc\nGiới tính: Nam\n\nSở thích:\n- Dùng iPhone\n- Bơi lội\n- Lãng mạn\n- Thích Gym\n- Nghiện Trà sữa\n- Nhạc Rock\n- Thẳng thắn\n- Mê Anime\n- Lạnh lùng\n- Hướng ngoại",
+            "title": "Tên: Lê Thị Minh Ngọc\nGiới tính: Nữ\n\nSở thích:\n- Dùng iPhone\n- Bơi lội\n- Lãng mạn\n- Thích Gym\n- Nghiện Trà sữa\n- Nhạc Rock\n- Thẳng thắn\n- Mê Anime\n- Lạnh lùng\n- Hướng ngoại",
             "value": 20
         },
         {
